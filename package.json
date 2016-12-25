@@ -1,0 +1,40 @@
+{
+  "name": "fbapi",
+  "version": "0.0.0",
+  "description": "Facebook Graph API client for NodeJS",
+  "typings": "typings.d.ts",
+  "main": "index.js",
+  "scripts": {
+    "test": "tsc && tslint --project=tsconfig.json && jest --verbose --coverage",
+    "watch:test": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arvitaly/fbapi.git"
+  },
+  "keywords": [
+    "facebook",
+    "graph",
+    "api"
+  ],
+  "author": "arvitaly",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/arvitaly/fbapi/issues"
+  },
+  "homepage": "https://github.com/arvitaly/fbapi#readme",
+  "jest": {
+    "automock": false
+  },
+  "devDependencies": {
+    "@types/jest": "^16.0.2",
+    "coveralls": "^2.11.15",
+    "jest": "^18.0.0",
+    "tslint": "^4.2.0",
+    "typescript": "^2.1.4"
+  },
+  "dependencies": {
+    "@types/node-fetch": "^1.6.6",
+    "node-fetch": "^1.6.3"
+  }
+}
