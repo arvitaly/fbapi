@@ -1,5 +1,7 @@
 # fbapi
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/arvitaly/fbapi.svg)](https://greenkeeper.io/)
+
 Facebook Graph API client for NodeJS
 
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url] [![Coverage percentage][coveralls-image]][coveralls-url]
