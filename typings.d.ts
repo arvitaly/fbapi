@@ -29,7 +29,14 @@ interface IGroup {
 }
 type GroupFields = keyof IGroup;
 interface IResource<F, O> {
-    get(params?: { fields?: F[] }): Promise<O>;
+    get(params?: {
+        fields?: F[];
+        [index: string]: any;
+    }): Promise<O>;
+}
+interface IGroupFeedParams {
+    since?: Date;
+    until?: Date;
 }
 interface IGroupEdges {
     // admins
@@ -54,7 +61,8 @@ interface IGroupFeedResource extends IResource<PostFields, IEdges<IPost>> {
 
 }
 interface IProfileField {
-
+    id: string;
+    name: string;
 }
 interface IPlaceField {
 
@@ -100,6 +108,7 @@ interface IPost {
     with_tags: any; // Profiles tagged as being 'with' the publisher of the post. JSON object with a data field that contains a list of Profile objects.
 }
 export interface IClient {
+    get(path: string, params: { [index: string]: any }): Promise<any>;
     setAccessToken(token: string): void;
     setFetch(newFetch: typeof fetch): void;
     group(id: string): IGroupResource;

@@ -2,7 +2,6 @@
   "name": "fbapi",
   "version": "0.0.1",
   "description": "Facebook Graph API client for NodeJS",
-  "typings": "typings.d.ts",
   "main": "index.js",
   "scripts": {
     "test": "tsc && tslint --project=tsconfig.json && jest --verbose --coverage",

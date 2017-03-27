@@ -3,7 +3,7 @@ import { IClient } from "./../typings";
 describe("Client test", () => {
     let client: IClient;
     const fetch = jest.fn((url: string) => {
-        if (url === "https://graph.facebook.com/v2.8/123?access_token=at1") {
+        if (url === "https://graph.facebook.com/v2.8/123?access_token=at1&fields=id,name") {
             return {
                 json: () => {
                     return { id: 15 };

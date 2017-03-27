@@ -2,11 +2,12 @@
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments)).next());
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = require("node-fetch");
 const API_URL = (version = "2.8") => {
     return `https://graph.facebook.com/v${version}`;
@@ -23,7 +24,9 @@ class Client {
                     get: this.get.bind(this, id),
                     feed: () => {
                         return {
-                            get: this.getEdges.bind(this, id + "/feed"),
+                            get: (params) => {
+                                return this.getEdges(id + "/feed", params);
+                            },
                         };
                     },
                 };
@@ -41,7 +44,8 @@ class Client {
     }
     get(path, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken);
+            const result = yield this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken +
+                this.getUrlParamsQuery(params));
             return result.json();
         });
     }
@@ -59,17 +63,33 @@ class Client {
     }
     getEdges(path, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken);
+            const result = yield this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken +
+                this.getUrlParamsQuery(params));
             const edges = yield result.json();
             return this.prepareEdges(edges);
         });
     }
+    getUrlParamsQuery(params) {
+        let urlParams = [];
+        if (params) {
+            Object.keys(params).map((paramName) => {
+                let value;
+                if (paramName === "fields") {
+                    value = params[paramName].join(",");
+                }
+                else {
+                    value = encodeURIComponent(params[paramName]);
+                }
+                urlParams.push(paramName + "=" + value);
+            });
+        }
+        return (urlParams.length > 0 ? "&" + urlParams.join("&") : "");
+    }
     prepareEdges(edges) {
         const res = edges.data ? edges.data.map((v) => v) : [];
-        res.next = edges.next ? this.next.bind(this, edges.next) : () => null;
-        res.previous = edges.previous ? this.previous.bind(this, edges.previous) : () => null;
+        res.next = edges.paging.next ? this.next.bind(this, edges.paging.next) : () => null;
+        res.previous = edges.paging.previous ? this.previous.bind(this, edges.paging.previous) : () => null;
         return res;
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Client;
