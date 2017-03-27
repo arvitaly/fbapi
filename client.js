@@ -66,6 +66,9 @@ class Client {
             const result = yield this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken +
                 this.getUrlParamsQuery(params));
             const edges = yield result.json();
+            if (edges.error) {
+                throw new Error(JSON.stringify(edges.error));
+            }
             return this.prepareEdges(edges);
         });
     }
@@ -87,8 +90,9 @@ class Client {
     }
     prepareEdges(edges) {
         const res = edges.data ? edges.data.map((v) => v) : [];
-        res.next = edges.paging.next ? this.next.bind(this, edges.paging.next) : () => null;
-        res.previous = edges.paging.previous ? this.previous.bind(this, edges.paging.previous) : () => null;
+        res.next = edges.paging && edges.paging.next ? this.next.bind(this, edges.paging.next) : () => null;
+        res.previous = edges.paging &&
+            edges.paging.previous ? this.previous.bind(this, edges.paging.previous) : () => null;
         return res;
     }
 }
