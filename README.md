@@ -11,7 +11,19 @@ Facebook Graph API client for NodeJS
 
 # Usage
 
-
+```typescript
+    import createClient from "fbapi";
+    const fbapi = createClient({accessToken: "..."});
+    (async ()=>{
+        const group = await fbapi.group("123").get();
+        const posts = [];
+        for await (const post of fbapi.group("123").feed().read({fields:["message"]}, "1568" )){
+            posts.push(post);
+        }
+        console.log(posts);
+    })()
+    
+```
 
 # API
 
