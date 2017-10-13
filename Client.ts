@@ -1,15 +1,20 @@
 import fetch from "node-fetch";
+import sleep from "sleep-es6";
+(Symbol as any).asyncIterator = Symbol.asyncIterator || Symbol.for("Symbol.asyncIterator");
 const API_URL = (version: string = "2.8") => {
     return `https://graph.facebook.com/v${version}`;
 };
 export interface IOpts {
     accessToken?: string;
+    readTimeout?: number;
 }
 class Client {
     protected apiUrl = API_URL();
     protected fetch = fetch;
     protected accessToken: string;
+    protected readTimeout: number;
     constructor(opts: IOpts = {}) {
+        this.readTimeout = opts.readTimeout || 500;
         Object.defineProperty(this, "group", {
             enumerable: true,
             configurable: true,
@@ -20,6 +25,9 @@ class Client {
                         return {
                             get: (params: any) => {
                                 return this.getEdges(id + "/feed", params);
+                            },
+                            read: (params: any, maxId: string) => {
+                                return this.readEdges(id + "/feed", params, maxId);
                             },
                         };
                     },
@@ -58,16 +66,28 @@ class Client {
         }
         return this.prepareEdges(edges);
     }
+    public async *readEdges(path: string, params: { [index: string]: any }, maxId: string) {
+        let isEnd = false;
+        let edges = await this.getEdges(path, params);
+        do {
+            for (const item of edges) {
+                if (maxId && item.id === maxId) {
+                    isEnd = true;
+                    break;
+                }
+                yield item;
+            }
+            await sleep(this.readTimeout);
+            edges = await edges.next();
+            isEnd = !edges || edges.length === 0;
+        } while (!isEnd);
+    }
     protected getUrlParamsQuery(params: { [index: string]: any }) {
-        let urlParams: string[] = [];
+        const urlParams: string[] = [];
         if (params) {
             Object.keys(params).map((paramName) => {
-                let value: string;
-                if (paramName === "fields") {
-                    value = params[paramName].join(",");
-                } else {
-                    value = encodeURIComponent(params[paramName]);
-                }
+                const value = paramName === "fields" ? params[paramName].join(",") :
+                    encodeURIComponent(params[paramName]);
                 urlParams.push(paramName + "=" + value);
             });
         }

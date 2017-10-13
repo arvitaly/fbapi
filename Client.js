@@ -7,8 +7,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __await = (this && this.__await) || function (v) { return this instanceof __await ? (this.v = v, this) : new __await(v); }
+var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _arguments, generator) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var g = generator.apply(thisArg, _arguments || []), i, q = [];
+    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
+    function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
+    function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
+    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);  }
+    function fulfill(value) { resume("next", value); }
+    function reject(value) { resume("throw", value); }
+    function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = require("node-fetch");
+const sleep_es6_1 = require("sleep-es6");
+Symbol.asyncIterator = Symbol.asyncIterator || Symbol.for("Symbol.asyncIterator");
 const API_URL = (version = "2.8") => {
     return `https://graph.facebook.com/v${version}`;
 };
@@ -16,6 +30,7 @@ class Client {
     constructor(opts = {}) {
         this.apiUrl = API_URL();
         this.fetch = node_fetch_1.default;
+        this.readTimeout = opts.readTimeout || 500;
         Object.defineProperty(this, "group", {
             enumerable: true,
             configurable: true,
@@ -26,6 +41,9 @@ class Client {
                         return {
                             get: (params) => {
                                 return this.getEdges(id + "/feed", params);
+                            },
+                            read: (params, maxId) => {
+                                return this.readEdges(id + "/feed", params, maxId);
                             },
                         };
                     },
@@ -72,17 +90,30 @@ class Client {
             return this.prepareEdges(edges);
         });
     }
+    readEdges(path, params, maxId) {
+        return __asyncGenerator(this, arguments, function* readEdges_1() {
+            let isEnd = false;
+            let edges = yield __await(this.getEdges(path, params));
+            do {
+                for (const item of edges) {
+                    if (maxId && item.id === maxId) {
+                        isEnd = true;
+                        break;
+                    }
+                    yield item;
+                }
+                yield __await(sleep_es6_1.default(this.readTimeout));
+                edges = yield __await(edges.next());
+                isEnd = !edges || edges.length === 0;
+            } while (!isEnd);
+        });
+    }
     getUrlParamsQuery(params) {
-        let urlParams = [];
+        const urlParams = [];
         if (params) {
             Object.keys(params).map((paramName) => {
-                let value;
-                if (paramName === "fields") {
-                    value = params[paramName].join(",");
-                }
-                else {
-                    value = encodeURIComponent(params[paramName]);
-                }
+                const value = paramName === "fields" ? params[paramName].join(",") :
+                    encodeURIComponent(params[paramName]);
                 urlParams.push(paramName + "=" + value);
             });
         }

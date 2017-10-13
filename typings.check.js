@@ -32,3 +32,5 @@ function getFeed() {
         } while (!isFinish);
     });
 }
+getGroup();
+getFeed();

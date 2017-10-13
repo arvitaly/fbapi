@@ -20,3 +20,5 @@ async function getFeed() {
         isFinish = !!feed;
     } while (!isFinish);
 }
+getGroup();
+getFeed();

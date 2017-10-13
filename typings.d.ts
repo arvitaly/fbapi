@@ -33,7 +33,15 @@ interface IResource<F, O> {
         fields?: F[];
         [index: string]: any;
     }): Promise<O>;
+
 }
+interface IEdgesResource<F, O> extends IResource<F, IEdges<O>> {
+    read(params?: {
+        fields?: F[];
+        [index: string]: any;
+    }): AsyncIterableIterator<O>;
+}
+
 interface IGroupFeedParams {
     since?: Date;
     until?: Date;
@@ -57,7 +65,7 @@ interface IEdges<T> extends Array<T> {
     next(): Promise<IEdges<T>>;
     previous(): Promise<IEdges<T>>;
 }
-interface IGroupFeedResource extends IResource<PostFields, IEdges<IPost>> {
+interface IGroupFeedResource extends IEdgesResource<PostFields, IPost> {
 
 }
 interface IProfileField {
