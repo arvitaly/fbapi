@@ -23,7 +23,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = require("node-fetch");
 const sleep_es6_1 = require("sleep-es6");
 Symbol.asyncIterator = Symbol.asyncIterator || Symbol.for("Symbol.asyncIterator");
-const API_URL = (version = "2.8") => {
+exports.DEFAULT_VERSION = "2.10";
+const API_URL = (version = exports.DEFAULT_VERSION) => {
     return `https://graph.facebook.com/v${version}`;
 };
 class Client {
@@ -46,6 +47,17 @@ class Client {
                                 return this.readEdges(id + "/feed", params, maxId);
                             },
                         };
+                    },
+                };
+            },
+        });
+        Object.defineProperty(this, "object", {
+            enumerable: true,
+            configurable: true,
+            value: (id) => {
+                return {
+                    comments: (params) => {
+                        return this.getEdges(id + "/comments", params);
                     },
                 };
             },

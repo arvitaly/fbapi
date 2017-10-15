@@ -25,7 +25,7 @@ const posts = [{
 describe("Client test", () => {
     let client;
     const fetch = jest.fn((url) => {
-        if (url === "https://graph.facebook.com/v2.8/123?access_token=at1&fields=id,name") {
+        if (url === "https://graph.facebook.com/v" + client_1.DEFAULT_VERSION + "/123?access_token=at1&fields=id,name") {
             return {
                 json: () => {
                     return group1;
@@ -53,7 +53,7 @@ describe("Client test", () => {
                 },
             };
         }
-        if (url === "https://graph.facebook.com/v2.8/123/feed?access_token=at1&fields=message") {
+        if (url === "https://graph.facebook.com/v" + client_1.DEFAULT_VERSION + "/123/feed?access_token=at1&fields=message") {
             return {
                 json: () => {
                     return {
@@ -65,19 +65,20 @@ describe("Client test", () => {
                 },
             };
         }
-        if (url === "https://graph.facebook.com/v2.8/124/feed?access_token=at1&fields=message") {
+        if (url === "https://graph.facebook.com/v" + client_1.DEFAULT_VERSION + "/124/feed?access_token=at1&fields=message") {
             return {
                 json: () => {
                     return {
                         data: posts,
                         paging: {
-                            next: "https://graph.facebook.com/v2.8/124/feed?access_token=at1&fields=message&n1",
+                            next: "https://graph.facebook.com/v" + client_1.DEFAULT_VERSION +
+                                "/124/feed?access_token=at1&fields=message&n1",
                         },
                     };
                 },
             };
         }
-        if (url === "https://graph.facebook.com/v2.8/124/feed?access_token=at1&fields=message&n1") {
+        if (url === "https://graph.facebook.com/v" + client_1.DEFAULT_VERSION + "/124/feed?access_token=at1&fields=message&n1") {
             return {
                 json: () => {
                     return {

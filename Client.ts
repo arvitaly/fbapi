@@ -1,7 +1,8 @@
 import fetch from "node-fetch";
 import sleep from "sleep-es6";
 (Symbol as any).asyncIterator = Symbol.asyncIterator || Symbol.for("Symbol.asyncIterator");
-const API_URL = (version: string = "2.8") => {
+export const DEFAULT_VERSION = "2.10";
+const API_URL = (version: string = DEFAULT_VERSION) => {
     return `https://graph.facebook.com/v${version}`;
 };
 export interface IOpts {
@@ -30,6 +31,17 @@ class Client {
                                 return this.readEdges(id + "/feed", params, maxId);
                             },
                         };
+                    },
+                };
+            },
+        });
+        Object.defineProperty(this, "object", {
+            enumerable: true,
+            configurable: true,
+            value: (id: string) => {
+                return {
+                    comments: (params: any) => {
+                        return this.getEdges(id + "/comments", params);
                     },
                 };
             },
