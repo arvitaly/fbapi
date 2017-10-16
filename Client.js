@@ -157,6 +157,11 @@ class Client {
         res.next = edges.paging && edges.paging.next ? this.next.bind(this, edges.paging.next) : () => null;
         res.previous = edges.paging &&
             edges.paging.previous ? this.previous.bind(this, edges.paging.previous) : () => null;
+        Object.defineProperty(res, "paging", {
+            configurable: false,
+            enumerable: false,
+            value: edges.paging,
+        });
         return res;
     }
 }

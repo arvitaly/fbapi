@@ -116,6 +116,8 @@ interface IPost {
     with_tags: any; // Profiles tagged as being 'with' the publisher of the post. JSON object with a data field that contains a list of Profile objects.
 }
 export interface ISearchParams {
+    limit: number;
+    fields: Array<keyof ISearchFields>;
     type: "place";
     center: string;
     distance: number;
