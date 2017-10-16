@@ -32,6 +32,20 @@ class Client {
         this.apiUrl = API_URL();
         this.fetch = node_fetch_1.default;
         this.readTimeout = opts.readTimeout || 500;
+        Object.defineProperty(this, "search", {
+            enumerable: true,
+            configurable: true,
+            value: (params) => {
+                return {
+                    get: () => {
+                        return this.getEdges("search", params);
+                    },
+                    read: () => {
+                        return this.readEdges("search", params);
+                    },
+                };
+            },
+        });
         Object.defineProperty(this, "group", {
             enumerable: true,
             configurable: true,
@@ -74,9 +88,16 @@ class Client {
     }
     get(path, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken +
+            const response = yield this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken +
                 this.getUrlParamsQuery(params));
-            return result.json();
+            const result = yield response.json();
+            if (result.error) {
+                throw new Error("Facebook error: " + JSON.stringify(result.error)
+                    + ", version " + this.apiUrl
+                    + ", path " +
+                    path + ", params: " + JSON.stringify(params));
+            }
+            return result;
         });
     }
     next(url) {

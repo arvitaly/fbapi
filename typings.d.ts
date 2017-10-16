@@ -115,9 +115,54 @@ interface IPost {
     updated_time: string; // datetime. The time when the post was created, last edited or the time of the last comment that was left on the post. For a post about a life event, this will be the date and time of the life event
     with_tags: any; // Profiles tagged as being 'with' the publisher of the post. JSON object with a data field that contains a list of Profile objects.
 }
+export interface ISearchParams {
+    type: "place";
+    center: string;
+    distance: number;
+    q: string;
+    // The available categories are: ARTS_ENTERTAINMENT, EDUCATION, FITNESS_RECREATION, FOOD_BEVERAGE, HOTEL_LODGING, MEDICAL_HEALTH, SHOPPING_RETAIL, TRAVEL_TRANSPORTATION.
+    categories: string;
+}
+export interface ISearchFields {
+    about: string;
+    app_links: any;
+    category_list: any;
+    checkins: any;
+    context: any;
+    cover: any;
+    description: string;
+    engagement: any;
+    fan_count: number;
+    hours: any;
+    is_always_open: boolean;
+    is_permanently_closed: boolean;
+    is_verified: boolean;
+    link: string;
+    location: any;
+    name: string;
+    overall_star_rating: any;
+    parking: any;
+    phone: string;
+    photos: any;
+    picture: any;
+    price_range: any;
+    rating_count: any;
+    restaurant_specialties: any;
+    website: any;
+}
+export interface IErrorResponse {
+    error: {
+        message: string;
+        type: string;
+        code: number;
+        error_subcode: number;
+        fbtrace_id: string;
+    };
+}
 export interface IClient {
     get(path: string, params: { [index: string]: any }): Promise<any>;
     setAccessToken(token: string): void;
     setFetch(newFetch: typeof fetch): void;
     group(id: string): IGroupResource;
+    search(params: ISearchParams): { data: ISearchFields[] };
 }

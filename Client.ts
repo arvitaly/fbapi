@@ -16,6 +16,20 @@ class Client {
     protected readTimeout: number;
     constructor(opts: IOpts = {}) {
         this.readTimeout = opts.readTimeout || 500;
+        Object.defineProperty(this, "search", {
+            enumerable: true,
+            configurable: true,
+            value: (params: any) => {
+                return {
+                    get: () => {
+                        return this.getEdges("search", params);
+                    },
+                    read: () => {
+                        return this.readEdges("search", params);
+                    },
+                };
+            },
+        });
         Object.defineProperty(this, "group", {
             enumerable: true,
             configurable: true,
@@ -57,9 +71,17 @@ class Client {
         this.fetch = newFetch;
     }
     public async get(path: string, params: { [index: string]: any }) {
-        const result = await this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken +
+        const response = await this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken +
             this.getUrlParamsQuery(params));
-        return result.json();
+        const result = await response.json();
+        if (result.error) {
+            throw new Error("Facebook error: " + JSON.stringify(result.error)
+                + ", version " + this.apiUrl
+                + ", path " +
+                path + ", params: " + JSON.stringify(params),
+            );
+        }
+        return result;
     }
     public async next(url: string) {
         const result = await this.fetch(url);
@@ -78,7 +100,7 @@ class Client {
         }
         return this.prepareEdges(edges);
     }
-    public async *readEdges(path: string, params: { [index: string]: any }, maxId: string) {
+    public async *readEdges(path: string, params: { [index: string]: any }, maxId?: string) {
         let isEnd = false;
         let edges = await this.getEdges(path, params);
         do {
