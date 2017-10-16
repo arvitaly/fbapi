@@ -124,6 +124,7 @@ export interface ISearchParams {
     categories: string;
 }
 export interface ISearchFields {
+    id: string;
     about: string;
     app_links: any;
     category_list: any;
