@@ -19,12 +19,12 @@ class Client {
         Object.defineProperty(this, "search", {
             enumerable: true,
             configurable: true,
-            value: (params: any) => {
+            value: () => {
                 return {
-                    get: () => {
+                    get: (params: any) => {
                         return this.getEdges("search", params);
                     },
-                    read: () => {
+                    read: (params: any) => {
                         return this.readEdges("search", params);
                     },
                 };

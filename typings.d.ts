@@ -28,18 +28,14 @@ interface IGroup {
     updated_time: string;// Datetime. The last time the group was updated (this includes changes in the group's properties and changes in posts and comments if the session user can see them).
 }
 type GroupFields = keyof IGroup;
-interface IResource<F, O> {
-    get(params?: {
+interface IResource<P, F, O> {
+    get(params?: P & {
         fields?: F[];
-        [index: string]: any;
     }): Promise<O>;
 
 }
-interface IEdgesResource<F, O> extends IResource<F, IEdges<O>> {
-    read(params?: {
-        fields?: F[];
-        [index: string]: any;
-    }): AsyncIterableIterator<O>;
+interface IEdgesResource<P, F, O> extends IResource<P, F, IEdges<O>> {
+    read(params?: P & { fields?: F[] }): AsyncIterableIterator<O>;
 }
 
 interface IGroupFeedParams {
@@ -58,14 +54,14 @@ interface IGroupEdges {
     // photos
     // videos
 }
-interface IGroupResource extends IResource<IGroupField, IGroup>, IGroupEdges {
+interface IGroupResource extends IResource<any, IGroupField, IGroup>, IGroupEdges {
 
 }
 interface IEdges<T> extends Array<T> {
     next(): Promise<IEdges<T>>;
     previous(): Promise<IEdges<T>>;
 }
-interface IGroupFeedResource extends IEdgesResource<PostFields, IPost> {
+interface IGroupFeedResource extends IEdgesResource<any, PostFields, IPost> {
 
 }
 interface IProfileField {
@@ -116,14 +112,14 @@ interface IPost {
     with_tags: any; // Profiles tagged as being 'with' the publisher of the post. JSON object with a data field that contains a list of Profile objects.
 }
 export interface ISearchParams {
-    limit: number;
-    fields: Array<keyof ISearchFields>;
+    limit?: number;
+    fields?: Array<keyof ISearchFields>;
     type: "place";
-    center: string;
-    distance: number;
-    q: string;
+    center?: string;
+    distance?: number;
+    q?: string;
     // The available categories are: ARTS_ENTERTAINMENT, EDUCATION, FITNESS_RECREATION, FOOD_BEVERAGE, HOTEL_LODGING, MEDICAL_HEALTH, SHOPPING_RETAIL, TRAVEL_TRANSPORTATION.
-    categories: string;
+    categories?: string;
 }
 export interface ISearchFields {
     id: string;
@@ -167,5 +163,5 @@ export interface IClient {
     setAccessToken(token: string): void;
     setFetch(newFetch: typeof fetch): void;
     group(id: string): IGroupResource;
-    search(params: ISearchParams): { data: ISearchFields[] };
+    search(): IEdgesResource<ISearchParams, keyof ISearchFields, ISearchFields>;
 }

@@ -19,6 +19,12 @@ async function getFeed() {
         feed = await feed.next();
         isFinish = !!feed;
     } while (!isFinish);
+    for await (const place of client.search().read({
+        type: "place",
+        fields: ["id"],
+    })) {
+        place.about.toLocaleLowerCase();
+    }
 }
 getGroup();
 getFeed();

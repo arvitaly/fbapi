@@ -7,6 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __asyncValues = (this && this.__asyncIterator) || function (o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator];
+    return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 client.group("123").get({
     fields: ["cover"],
@@ -30,6 +35,23 @@ function getFeed() {
             feed = yield feed.next();
             isFinish = !!feed;
         } while (!isFinish);
+        try {
+            for (var _a = __asyncValues(client.search().read({
+                type: "place",
+                fields: ["id"],
+            })), _b; _b = yield _a.next(), !_b.done;) {
+                const place = yield _b.value;
+                place.about.toLocaleLowerCase();
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_b && !_b.done && (_c = _a.return)) yield _c.call(_a);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        var e_1, _c;
     });
 }
 getGroup();
