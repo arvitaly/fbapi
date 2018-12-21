@@ -7,10 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __asyncValues = (this && this.__asyncIterator) || function (o) {
+var __asyncValues = (this && this.__asyncValues) || function (o) {
     if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator];
-    return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 client.group("123").get({
@@ -24,6 +26,7 @@ function getGroup() {
 }
 function getFeed() {
     return __awaiter(this, void 0, void 0, function* () {
+        var e_1, _a;
         let isFinish = false;
         do {
             let feed = yield client.group("123").feed().get({
@@ -36,22 +39,21 @@ function getFeed() {
             isFinish = !!feed;
         } while (!isFinish);
         try {
-            for (var _a = __asyncValues(client.search().read({
+            for (var _b = __asyncValues(client.search().read({
                 type: "place",
                 fields: ["id"],
-            })), _b; _b = yield _a.next(), !_b.done;) {
-                const place = yield _b.value;
+            })), _c; _c = yield _b.next(), !_c.done;) {
+                const place = _c.value;
                 place.about.toLocaleLowerCase();
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (_b && !_b.done && (_c = _a.return)) yield _c.call(_a);
+                if (_c && !_c.done && (_a = _b.return)) yield _a.call(_b);
             }
             finally { if (e_1) throw e_1.error; }
         }
-        var e_1, _c;
     });
 }
 getGroup();

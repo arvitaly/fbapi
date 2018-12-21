@@ -8,10 +8,6 @@
         "noImplicitThis": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "lib": [
-            "dom",
-            "esnext",
-            "esnext.asynciterable"
-        ]
+        "lib": ["esnext", "esnext.asynciterable"]
     }
 }

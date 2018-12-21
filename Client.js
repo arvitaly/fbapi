@@ -14,7 +14,7 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
     function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
     function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
-    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);  }
+    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
     function fulfill(value) { resume("next", value); }
     function reject(value) { resume("throw", value); }
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
@@ -22,8 +22,10 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = require("node-fetch");
 const sleep_es6_1 = require("sleep-es6");
-Symbol.asyncIterator = Symbol.asyncIterator || Symbol.for("Symbol.asyncIterator");
 exports.DEFAULT_VERSION = "2.10";
+if (Symbol.asyncIterator === undefined) {
+    Symbol.asyncIterator = Symbol.for("asyncIterator");
+}
 const API_URL = (version = exports.DEFAULT_VERSION) => {
     return `https://graph.facebook.com/v${version}`;
 };
@@ -76,7 +78,7 @@ class Client {
                 };
             },
         });
-        if (typeof (opts.accessToken) !== "undefined") {
+        if (typeof opts.accessToken !== "undefined") {
             this.accessToken = opts.accessToken;
         }
     }
@@ -88,14 +90,17 @@ class Client {
     }
     get(path, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            const response = yield this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken +
-                this.getUrlParamsQuery(params));
+            const response = yield this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken + this.getUrlParamsQuery(params));
             const result = yield response.json();
             if (result.error) {
-                throw new Error("Facebook error: " + JSON.stringify(result.error)
-                    + ", version " + this.apiUrl
-                    + ", path " +
-                    path + ", params: " + JSON.stringify(params));
+                throw new Error("Facebook error: " +
+                    JSON.stringify(result.error) +
+                    ", version " +
+                    this.apiUrl +
+                    ", path " +
+                    path +
+                    ", params: " +
+                    JSON.stringify(params));
             }
             return result;
         });
@@ -114,8 +119,7 @@ class Client {
     }
     getEdges(path, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken +
-                this.getUrlParamsQuery(params));
+            const result = yield this.fetch(API_URL() + "/" + path + "?access_token=" + this.accessToken + this.getUrlParamsQuery(params));
             const edges = yield result.json();
             if (edges.error) {
                 throw new Error(JSON.stringify(edges.error));
@@ -133,7 +137,7 @@ class Client {
                         isEnd = true;
                         break;
                     }
-                    yield item;
+                    yield yield __await(item);
                 }
                 yield __await(sleep_es6_1.default(this.readTimeout));
                 edges = yield __await(edges.next());
@@ -145,18 +149,17 @@ class Client {
         const urlParams = [];
         if (params) {
             Object.keys(params).map((paramName) => {
-                const value = paramName === "fields" ? params[paramName].join(",") :
-                    encodeURIComponent(params[paramName]);
+                const value = paramName === "fields" ? params[paramName].join(",") : encodeURIComponent(params[paramName]);
                 urlParams.push(paramName + "=" + value);
             });
         }
-        return (urlParams.length > 0 ? "&" + urlParams.join("&") : "");
+        return urlParams.length > 0 ? "&" + urlParams.join("&") : "";
     }
     prepareEdges(edges) {
         const res = edges.data ? edges.data.map((v) => v) : [];
         res.next = edges.paging && edges.paging.next ? this.next.bind(this, edges.paging.next) : () => null;
-        res.previous = edges.paging &&
-            edges.paging.previous ? this.previous.bind(this, edges.paging.previous) : () => null;
+        res.previous =
+            edges.paging && edges.paging.previous ? this.previous.bind(this, edges.paging.previous) : () => null;
         Object.defineProperty(res, "paging", {
             configurable: false,
             enumerable: false,

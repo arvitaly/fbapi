@@ -7,10 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __asyncValues = (this && this.__asyncIterator) || function (o) {
+var __asyncValues = (this && this.__asyncValues) || function (o) {
     if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator];
-    return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
+    var m = o[Symbol.asyncIterator], i;
+    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("./../client");
@@ -117,11 +119,12 @@ describe("Client test", () => {
         expect(yield nextEdges.previous()).toEqual(p);
     }));
     it("read edges", () => __awaiter(this, void 0, void 0, function* () {
+        var e_1, _a;
         const edges = client.group("124").feed().read({ fields: ["message"] });
         let i = 0;
         try {
             for (var edges_1 = __asyncValues(edges), edges_1_1; edges_1_1 = yield edges_1.next(), !edges_1_1.done;) {
-                const edge = yield edges_1_1.value;
+                const edge = edges_1_1.value;
                 switch (i) {
                     case 0:
                         expect(edge.message).toBe("Hie");
@@ -146,6 +149,5 @@ describe("Client test", () => {
             finally { if (e_1) throw e_1.error; }
         }
         expect(i).toBe(3);
-        var e_1, _a;
     }));
 });
