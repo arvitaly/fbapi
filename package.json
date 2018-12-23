@@ -1,6 +1,6 @@
 {
   "name": "fbapi",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Facebook Graph API client for NodeJS",
   "main": "index.js",
   "scripts": {
