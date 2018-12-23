@@ -7,7 +7,7 @@ if (Symbol.asyncIterator === undefined) {
 const API_URL = (version: string = DEFAULT_VERSION) => {
     return `https://graph.facebook.com/v${version}`;
 };
-export interface IOpts {
+export interface IClientOpts {
     accessToken?: string;
     readTimeout?: number;
 }
@@ -16,7 +16,7 @@ class Client {
     protected fetch = fetch;
     protected accessToken: string;
     protected readTimeout: number;
-    constructor(opts: IOpts = {}) {
+    constructor(opts: IClientOpts = {}) {
         this.readTimeout = opts.readTimeout || 500;
         Object.defineProperty(this, "search", {
             enumerable: true,
