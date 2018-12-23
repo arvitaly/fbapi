@@ -1,8 +1,9 @@
 export * from "./typings";
-import Client, { IOpts } from "./Client";
+import FacebookClient, { IOpts } from "./Client";
 export * from "./oauth";
 import { IClient } from "./typings";
-export { default as Client } from "./Client";
+export { default as FacebookAPI } from "./Client";
 export default (opts?: IOpts): IClient => {
-    return new Client(opts) as any;
+    return new FacebookClient(opts) as any;
 };
+export const Client: IClient = FacebookClient as any;
