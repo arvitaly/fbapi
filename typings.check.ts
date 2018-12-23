@@ -10,9 +10,12 @@ async function getGroup() {
 async function getFeed() {
     let isFinish = false;
     do {
-        let feed = await client.group("123").feed().get({
-            fields: ["id"],
-        });
+        let feed = await client
+            .group("123")
+            .feed()
+            .get({
+                fields: ["id"],
+            });
         feed.map((post) => {
             post.id.charAt(0);
         });
@@ -26,5 +29,12 @@ async function getFeed() {
         place.about.toLocaleLowerCase();
     }
 }
+async function getMe() {
+    const user = await client.me().get();
+    user.first_name.toLowerCase();
+    const user2 = await client.me().get({ fields: ["name"] });
+    user2.name.toUpperCase();
+}
 getGroup();
 getFeed();
+getMe();

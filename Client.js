@@ -22,7 +22,7 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_fetch_1 = require("node-fetch");
 const sleep_es6_1 = require("sleep-es6");
-exports.DEFAULT_VERSION = "2.10";
+exports.DEFAULT_VERSION = "3.2";
 if (Symbol.asyncIterator === undefined) {
     Symbol.asyncIterator = Symbol.for("asyncIterator");
 }
@@ -45,6 +45,15 @@ class Client {
                     read: (params) => {
                         return this.readEdges("search", params);
                     },
+                };
+            },
+        });
+        Object.defineProperty(this, "me", {
+            enumerable: true,
+            configurable: true,
+            value: () => {
+                return {
+                    get: this.get.bind(this, "me"),
                 };
             },
         });

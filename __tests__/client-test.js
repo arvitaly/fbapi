@@ -17,13 +17,20 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("./../client");
 const group1 = { id: 15 };
-const posts = [{
+const posts = [
+    {
         id: "555",
         message: "Hie",
-    }, {
+    },
+    {
         id: "666",
         message: "Where?",
-    }];
+    },
+];
+const user1 = {
+    id: "1234",
+    first_name: "John",
+};
 describe("Client test", () => {
     let client;
     const fetch = jest.fn((url) => {
@@ -73,7 +80,8 @@ describe("Client test", () => {
                     return {
                         data: posts,
                         paging: {
-                            next: "https://graph.facebook.com/v" + client_1.DEFAULT_VERSION +
+                            next: "https://graph.facebook.com/v" +
+                                client_1.DEFAULT_VERSION +
                                 "/124/feed?access_token=at1&fields=message&n1",
                         },
                     };
@@ -92,12 +100,23 @@ describe("Client test", () => {
                 },
             };
         }
+        if (url === "https://graph.facebook.com/v" + client_1.DEFAULT_VERSION + "/me?access_token=at1") {
+            return {
+                json: () => {
+                    return user1;
+                },
+            };
+        }
         return Promise.reject("Unknown request: " + url);
     });
     beforeEach(() => {
         client = new client_1.default({ accessToken: "at1" });
         client.setFetch(fetch);
     });
+    it("get me", () => __awaiter(this, void 0, void 0, function* () {
+        const me = yield client.me().get();
+        expect(me).toEqual(user1);
+    }));
     it("get single", () => __awaiter(this, void 0, void 0, function* () {
         const group = yield client.group("123").get({
             fields: ["id", "name"],
@@ -105,7 +124,10 @@ describe("Client test", () => {
         expect(group).toEqual(group1);
     }));
     it("get edges", () => __awaiter(this, void 0, void 0, function* () {
-        const edges = yield client.group("123").feed().get({ fields: ["message"] });
+        const edges = yield client
+            .group("123")
+            .feed()
+            .get({ fields: ["message"] });
         const ps = posts.map((i) => i);
         ps.next = jasmine.any(Function);
         ps.previous = jasmine.any(Function);
@@ -120,7 +142,10 @@ describe("Client test", () => {
     }));
     it("read edges", () => __awaiter(this, void 0, void 0, function* () {
         var e_1, _a;
-        const edges = client.group("124").feed().read({ fields: ["message"] });
+        const edges = client
+            .group("124")
+            .feed()
+            .read({ fields: ["message"] });
         let i = 0;
         try {
             for (var edges_1 = __asyncValues(edges), edges_1_1; edges_1_1 = yield edges_1.next(), !edges_1_1.done;) {

@@ -29,7 +29,10 @@ function getFeed() {
         var e_1, _a;
         let isFinish = false;
         do {
-            let feed = yield client.group("123").feed().get({
+            let feed = yield client
+                .group("123")
+                .feed()
+                .get({
                 fields: ["id"],
             });
             feed.map((post) => {
@@ -56,5 +59,14 @@ function getFeed() {
         }
     });
 }
+function getMe() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const user = yield client.me().get();
+        user.first_name.toLowerCase();
+        const user2 = yield client.me().get({ fields: ["name"] });
+        user2.name.toUpperCase();
+    });
+}
 getGroup();
 getFeed();
+getMe();

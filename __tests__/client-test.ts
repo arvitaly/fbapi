@@ -1,13 +1,20 @@
 import Client, { DEFAULT_VERSION } from "./../client";
 import { IClient } from "./../typings";
 const group1 = { id: 15 };
-const posts = [{
-    id: "555",
-    message: "Hie",
-}, {
-    id: "666",
-    message: "Where?",
-}];
+const posts = [
+    {
+        id: "555",
+        message: "Hie",
+    },
+    {
+        id: "666",
+        message: "Where?",
+    },
+];
+const user1 = {
+    id: "1234",
+    first_name: "John",
+};
 describe("Client test", () => {
     let client: IClient;
     const fetch = jest.fn((url: string) => {
@@ -57,8 +64,10 @@ describe("Client test", () => {
                     return {
                         data: posts,
                         paging: {
-                            next: "https://graph.facebook.com/v" + DEFAULT_VERSION +
-                            "/124/feed?access_token=at1&fields=message&n1",
+                            next:
+                                "https://graph.facebook.com/v" +
+                                DEFAULT_VERSION +
+                                "/124/feed?access_token=at1&fields=message&n1",
                         },
                     };
                 },
@@ -76,11 +85,22 @@ describe("Client test", () => {
                 },
             };
         }
+        if (url === "https://graph.facebook.com/v" + DEFAULT_VERSION + "/me?access_token=at1") {
+            return {
+                json: () => {
+                    return user1;
+                },
+            };
+        }
         return Promise.reject("Unknown request: " + url);
     });
     beforeEach(() => {
         client = new Client({ accessToken: "at1" }) as any;
         client.setFetch(fetch);
+    });
+    it("get me", async () => {
+        const me = await client.me().get();
+        expect(me).toEqual(user1);
     });
     it("get single", async () => {
         const group = await client.group("123").get({
@@ -89,7 +109,10 @@ describe("Client test", () => {
         expect(group).toEqual(group1);
     });
     it("get edges", async () => {
-        const edges = await client.group("123").feed().get({ fields: ["message"] });
+        const edges = await client
+            .group("123")
+            .feed()
+            .get({ fields: ["message"] });
         const ps: any = posts.map((i) => i);
         ps.next = jasmine.any(Function);
         ps.previous = jasmine.any(Function);
@@ -103,7 +126,10 @@ describe("Client test", () => {
         expect(await nextEdges.previous()).toEqual(p);
     });
     it("read edges", async () => {
-        const edges = client.group("124").feed().read({ fields: ["message"] });
+        const edges = client
+            .group("124")
+            .feed()
+            .read({ fields: ["message"] });
         let i = 0;
         for await (const edge of edges) {
             switch (i) {

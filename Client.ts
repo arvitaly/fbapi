@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import sleep from "sleep-es6";
-export const DEFAULT_VERSION = "2.10";
+export const DEFAULT_VERSION = "3.2";
 if (Symbol.asyncIterator === undefined) {
     (Symbol as any).asyncIterator = Symbol.for("asyncIterator");
 }
@@ -29,6 +29,15 @@ class Client {
                     read: (params: any) => {
                         return this.readEdges("search", params);
                     },
+                };
+            },
+        });
+        Object.defineProperty(this, "me", {
+            enumerable: true,
+            configurable: true,
+            value: () => {
+                return {
+                    get: this.get.bind(this, "me"),
                 };
             },
         });
